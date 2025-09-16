@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Eye, EyeOff, ArrowLeft, Leaf, User, Building2, Phone, Mail, Lock } from 'lucide-react'
-import { useToast } from '@/hooks/useToast'
+// import { useToast } from '@/hooks/useToast'
 import LoadingSpinner from '@/components/common/LoadingSpinner'
-import { cn } from '@/lib/utils'
+// import { cn } from '@/lib/utils'
 
-const AuthPage = ({ onLogin }) => {
+const AuthPage = () => {
+  const navigate = useNavigate()
   const [userType, setUserType] = useState('farmer')
   const [authMode, setAuthMode] = useState('login')
   const [showPassword, setShowPassword] = useState(false)
@@ -38,7 +40,18 @@ const AuthPage = ({ onLogin }) => {
       phone: formData.phone,
       email: formData.email
     }
-    onLogin(userData)
+    
+    // Save user data to local storage
+    localStorage.setItem('agri3-user', JSON.stringify(userData))
+    
+    // Navigate based on user type
+    if (userData.type === 'farmer') {
+      navigate('/farmer-dashboard')
+    } else if (userData.type === 'seller') {
+      navigate('/seller-dashboard')
+    } else if (userData.type === 'admin') {
+      navigate('/admin-dashboard')
+    }
   }
 
   const resetForm = () => {
@@ -55,6 +68,19 @@ const AuthPage = ({ onLogin }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* Back Button */}
+        <div className="absolute top-4 left-4">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate('/')}
+            className="flex items-center gap-1 text-gray-600 hover:text-green-600"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Home
+          </Button>
+        </div>
+        
         {/* Logo */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-green-600 mb-2">Agrovardhan</h1>

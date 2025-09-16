@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Menu, X, User, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+// import { cn } from '@/lib/utils'
 
-const Navbar = ({ user = null, onLogout, onNavigateToAuth }) => {
+const Navbar = ({ user = null, onLogout }) => {
+  const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const navLinks = [
@@ -58,10 +60,10 @@ const Navbar = ({ user = null, onLogout, onNavigateToAuth }) => {
               </div>
             ) : (
               <>
-                <Button variant="ghost" size="sm" onClick={onNavigateToAuth}>
+                <Button variant="ghost" size="sm" onClick={() => navigate('/auth')}>
                   Login
                 </Button>
-                <Button size="sm" onClick={onNavigateToAuth}>
+                <Button size="sm" onClick={() => navigate('/auth')}>
                   Register
                 </Button>
               </>
