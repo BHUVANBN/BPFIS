@@ -55,7 +55,7 @@ const LandingPage = ({ onNavigateToAuth }) => {
               Empowering Agriculture with Technology
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Discover how Agri3 is revolutionizing farming through blockchain, AI, and community collaboration
+              Discover how Agrovardhan is revolutionizing farming through blockchain, AI, and community collaboration
             </p>
           </div>
           
@@ -112,7 +112,7 @@ const LandingPage = ({ onNavigateToAuth }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              How Agri3 Works
+              How Agrovardhan Works
             </h2>
             <p className="text-xl text-gray-600">
               Simple steps to transform your farming experience
@@ -188,7 +188,7 @@ const LandingPage = ({ onNavigateToAuth }) => {
             Ready to Transform Your Farm?
           </h2>
           <p className="text-xl text-green-100 mb-8">
-            Join thousands of farmers already benefiting from Agri3's revolutionary platform
+            Join thousands of farmers already benefiting from Agrovardhan's revolutionary platform
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Button 
@@ -218,7 +218,7 @@ const LandingPage = ({ onNavigateToAuth }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-2xl font-bold text-green-400 mb-4">Agri3</h3>
+              <h3 className="text-2xl font-bold text-green-400 mb-4">Agrovardhan</h3>
               <p className="text-gray-400">
                 Revolutionizing agriculture through blockchain, AI, and community collaboration.
               </p>
@@ -249,7 +249,7 @@ const LandingPage = ({ onNavigateToAuth }) => {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Agri3. All rights reserved.</p>
+            <p>&copy; 2024 Agrovardhan. All rights reserved.</p>
           </div>
         </div>
       </footer>

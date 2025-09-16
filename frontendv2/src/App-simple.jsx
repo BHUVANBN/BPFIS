@@ -16,7 +16,7 @@ function App() {
         fontSize: '24px',
         marginBottom: '20px'
       }}>
-        Agri3 Frontend Test - React is Loading!
+        Agrovardhan Frontend Test - React is Loading!
       </h1>
       <p style={{ 
         color: '#000000',

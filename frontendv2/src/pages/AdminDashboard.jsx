@@ -123,7 +123,7 @@ const AdminDashboard = ({ user, onLogout }) => {
             {/* Welcome Section */}
             <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl p-6 text-white">
               <h1 className="text-2xl font-bold mb-2">Admin Dashboard</h1>
-              <p className="text-purple-100">Monitor and manage the Agri3 platform</p>
+              <p className="text-purple-100">Monitor and manage the Agrovardhan platform</p>
             </div>
 
             {/* Quick Stats */}

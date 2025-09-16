@@ -46,7 +46,7 @@ const Sidebar = ({ isOpen, onToggle, activeTab, onTabChange, user, onLogout, men
       )}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-xl font-bold text-green-600">Agri3</h2>
+          <h2 className="text-xl font-bold text-green-600">Agrovardhan</h2>
           <Button
             variant="ghost"
             size="icon"

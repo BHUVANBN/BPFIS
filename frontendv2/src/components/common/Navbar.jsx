@@ -19,7 +19,7 @@ const Navbar = ({ user = null, onLogout, onNavigateToAuth }) => {
           {/* Logo */}
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-green-600">Agri3</h1>
+              <h1 className="text-2xl font-bold text-green-600">Agrovardhan</h1>
             </div>
           </div>
 

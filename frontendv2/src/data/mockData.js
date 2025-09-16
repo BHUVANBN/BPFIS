@@ -1,4 +1,4 @@
-// Mock data for the Agri3 application
+// Mock data for the Agrovardhan application
 
 export const features = [
   {
@@ -72,7 +72,7 @@ export const testimonials = [
     name: "Rajesh Kumar",
     role: "Farmer, Punjab",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-    quote: "Agri3 helped me pool my 5-acre farm with my neighbors. Our combined 50-acre unit now attracts better buyers and higher prices."
+    quote: "Agrovardhan helped me pool my 5-acre farm with my neighbors. Our combined 50-acre unit now attracts better buyers and higher prices."
   },
   {
     id: 2,
