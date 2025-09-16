@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect } from 'react'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import LandingPage from './pages/LandingPage'
 import AuthPage from './pages/AuthPage'
 import FarmerDashboard from './pages/FarmerDashboard'
@@ -9,55 +10,75 @@ import { Toaster } from './components/ui/toaster'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import './App.css'
 
-function App() {
-  const [currentPage, setCurrentPage] = useState('landing')
-  const [user, setUser] = useLocalStorage('agri3-user', null)
-
-  const handleLogin = (userData) => {
-    setUser(userData)
-    if (userData.type === 'farmer') {
-      setCurrentPage('farmer-dashboard')
-    } else if (userData.type === 'seller') {
-      setCurrentPage('seller-dashboard')
-    } else if (userData.type === 'admin') {
-      setCurrentPage('admin-dashboard')
-    }
+// Protected route component
+const ProtectedRoute = ({ children, user, userType }) => {
+  if (!user) {
+    return <Navigate to="/auth" replace />
   }
+  
+  if (userType && user.type !== userType) {
+    return <Navigate to="/" replace />
+  }
+  
+  return children
+}
 
+function App() {
+  const [user, setUser] = useLocalStorage('agri3-user', null)
+  const navigate = useNavigate()
+
+  // We'll keep handleLogout for the dashboard components
   const handleLogout = () => {
     setUser(null)
-    setCurrentPage('landing')
+    localStorage.removeItem('agri3-user')
+    navigate('/')
   }
-
-  const navigateToAuth = () => {
-    setCurrentPage('auth')
-  }
-
-  const navigateToLanding = () => {
-    setCurrentPage('landing')
-  }
-
-  const renderCurrentPage = () => {
-    switch (currentPage) {
-      case 'landing':
-        return <LandingPage onNavigateToAuth={navigateToAuth} />
-      case 'auth':
-        return <AuthPage onLogin={handleLogin} onBack={navigateToLanding} />
-      case 'farmer-dashboard':
-        return <FarmerDashboard user={user} onLogout={handleLogout} />
-      case 'seller-dashboard':
-        return <SellerDashboard user={user} onLogout={handleLogout} />
-      case 'admin-dashboard':
-        return <AdminDashboard user={user} onLogout={handleLogout} />
-      default:
-        return <LandingPage onNavigateToAuth={navigateToAuth} />
+  
+  // Load user from localStorage on app initialization
+  useEffect(() => {
+    const storedUser = localStorage.getItem('agri3-user')
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser))
+      } catch (error) {
+        console.error('Failed to parse user data:', error)
+        localStorage.removeItem('agri3-user')
+      }
     }
-  }
+  }, [])
 
   return (
     <ErrorBoundary>
       <div className="App">
-        {renderCurrentPage()}
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route 
+            path="/farmer-dashboard/*" 
+            element={
+              <ProtectedRoute user={user} userType="farmer">
+                <FarmerDashboard user={user} onLogout={handleLogout} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/seller-dashboard/*" 
+            element={
+              <ProtectedRoute user={user} userType="seller">
+                <SellerDashboard user={user} onLogout={handleLogout} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin-dashboard/*" 
+            element={
+              <ProtectedRoute user={user} userType="admin">
+                <AdminDashboard user={user} onLogout={handleLogout} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
         <Toaster />
       </div>
     </ErrorBoundary>
