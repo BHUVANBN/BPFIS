@@ -1,0 +1,14 @@
+     Sl no. District Name  ... Modal Price (Rs./Quintal)   Price Date
+0         1        Mysore  ...                      1850  02 Jan 2023
+1         2        Mysore  ...                      2600  23 Aug 2021
+2         3        Mysore  ...                      2500  03 Jan 2022
+3         4        Mysore  ...                      2750  13 Mar 2020
+4         5        Mysore  ...                      2800  28 Aug 2020
+..      ...           ...  ...                       ...          ...
+666     667        Mysore  ...                      3557  12 Aug 2024
+667     668        Mysore  ...                      3599  08 Nov 2024
+668     669        Mysore  ...                      3900  02 Jul 2024
+669     670        Mysore  ...                      3700  21 Jun 2022
+670     671        Mysore  ...                      3800  27 Jan 2025
+
+[671 rows x 10 columns]

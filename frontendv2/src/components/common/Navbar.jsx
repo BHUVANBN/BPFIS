@@ -12,6 +12,22 @@ const Navbar = ({ user = null, onLogout, onNavigateToAuth }) => {
     { name: 'Contact', href: '#contact' },
   ]
 
+  const handleSmoothScroll = (e, href) => {
+    e.preventDefault()
+    const targetId = href.substring(1) // Remove the '#' from href
+    const targetElement = document.getElementById(targetId)
+    
+    if (targetElement) {
+      targetElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+    }
+    
+    // Close mobile menu if open
+    setIsMenuOpen(false)
+  }
+
   return (
     <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -30,7 +46,8 @@ const Navbar = ({ user = null, onLogout, onNavigateToAuth }) => {
                 <a
                   key={link.name}
                   href={link.href}
-                  className="text-gray-600 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors"
+                  onClick={(e) => handleSmoothScroll(e, link.href)}
+                  className="text-gray-600 hover:text-green-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer"
                 >
                   {link.name}
                 </a>
@@ -93,8 +110,8 @@ const Navbar = ({ user = null, onLogout, onNavigateToAuth }) => {
               <a
                 key={link.name}
                 href={link.href}
-                className="text-gray-600 hover:text-green-600 block px-3 py-2 text-base font-medium"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={(e) => handleSmoothScroll(e, link.href)}
+                className="text-gray-600 hover:text-green-600 block px-3 py-2 text-base font-medium cursor-pointer"
               >
                 {link.name}
               </a>

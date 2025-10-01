@@ -45,7 +45,7 @@ const LandingPage = ({ onNavigateToAuth }) => {
       <Navbar onNavigateToAuth={onNavigateToAuth} />
       
       {/* Hero Section */}
-      <HeroBanner />
+      <HeroBanner onNavigateToAuth={onNavigateToAuth} />
 
       {/* Features Section */}
       <section id="features" className="py-20 bg-white">
@@ -181,6 +181,50 @@ const LandingPage = ({ onNavigateToAuth }) => {
         </div>
       </section>
 
+      {/* About Section */}
+      <section id="about" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                About Agrovardhan
+              </h2>
+              <p className="text-lg text-gray-600 mb-6">
+                Agrovardhan is revolutionizing agriculture by combining cutting-edge technology with traditional farming wisdom. Our platform empowers farmers through blockchain transparency, AI-driven insights, and community collaboration.
+              </p>
+              <p className="text-lg text-gray-600 mb-6">
+                We believe in creating a sustainable future where small-scale farmers can compete globally, where technology serves humanity, and where agricultural communities thrive together.
+              </p>
+              <div className="grid grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-2xl font-bold text-green-600 mb-2">50K+</h3>
+                  <p className="text-gray-600">Farmers Connected</p>
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-green-600 mb-2">₹100Cr+</h3>
+                  <p className="text-gray-600">Revenue Generated</p>
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-green-600 mb-2">25+</h3>
+                  <p className="text-gray-600">States Covered</p>
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-green-600 mb-2">95%</h3>
+                  <p className="text-gray-600">Satisfaction Rate</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <img
+                src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                alt="Modern farming with technology"
+                className="rounded-lg shadow-xl"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-green-600">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
@@ -193,7 +237,8 @@ const LandingPage = ({ onNavigateToAuth }) => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Button 
               size="lg" 
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg"
+              variant="default"
+              className="bg-white text-green-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold"
               onClick={onNavigateToAuth}
             >
               <Users className="mr-2 h-5 w-5" />
@@ -203,12 +248,149 @@ const LandingPage = ({ onNavigateToAuth }) => {
             <Button 
               size="lg" 
               variant="outline" 
-              className="border-2 border-white text-white hover:bg-white hover:text-green-600 px-8 py-4 text-lg"
+              className="border-2 border-white  text-green-600 px-8 py-4 text-lg font-semibold"
               onClick={onNavigateToAuth}
             >
               <Leaf className="mr-2 h-5 w-5" />
               Register as Seller
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Get in Touch
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Contact Information */}
+            <div>
+              <h3 className="text-2xl font-semibold text-gray-900 mb-6">Contact Information</h3>
+              <div className="space-y-6">
+                <div className="flex items-start">
+                  <MapPin className="h-6 w-6 text-green-600 mt-1 mr-4" />
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Address</h4>
+                    <p className="text-gray-600">
+                      123 Agriculture Hub<br />
+                      Tech Park, Bangalore<br />
+                      Karnataka, India 560001
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <Users className="h-6 w-6 text-green-600 mt-1 mr-4" />
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Phone</h4>
+                    <p className="text-gray-600">+91 98765 43210</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <FileText className="h-6 w-6 text-green-600 mt-1 mr-4" />
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Email</h4>
+                    <p className="text-gray-600">contact@agrovardhan.com</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-8">
+                <h4 className="font-semibold text-gray-900 mb-4">Business Hours</h4>
+                <div className="space-y-2 text-gray-600">
+                  <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
+                  <p>Saturday: 10:00 AM - 4:00 PM</p>
+                  <p>Sunday: Closed</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Contact Form */}
+            <div>
+              <form className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      placeholder="Your first name"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      placeholder="Your last name"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="your.email@example.com"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                    Subject
+                  </label>
+                  <input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="What's this about?"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={6}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="Tell us more about your inquiry..."
+                  ></textarea>
+                </div>
+                
+                <Button 
+                  type="submit" 
+                  size="lg"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white"
+                >
+                  Send Message
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </form>
+            </div>
           </div>
         </div>
       </section>

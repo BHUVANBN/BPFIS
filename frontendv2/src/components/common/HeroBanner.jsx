@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Users, Leaf, TrendingUp } from 'lucide-react'
 
-const HeroBanner = () => {
+const HeroBanner = ({ onNavigateToAuth }) => {
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
@@ -28,7 +28,11 @@ const HeroBanner = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg">
+            <Button 
+              size="lg" 
+              className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg"
+              onClick={onNavigateToAuth}
+            >
               <Users className="mr-2 h-5 w-5" />
               Register as Farmer
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -36,7 +40,8 @@ const HeroBanner = () => {
             <Button 
               size="lg" 
               variant="outline" 
-              className="border-2 border-white text-white hover:bg-white hover:text-green-600 px-8 py-4 text-lg"
+              className="border-2 border-white  text-green-600 px-8 py-4 text-lg font-semibold"
+              onClick={onNavigateToAuth}
             >
               <Leaf className="mr-2 h-5 w-5" />
               Register as Seller
