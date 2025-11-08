@@ -8,7 +8,7 @@ import {
   deleteDocument
 } from '../controllers/documentController.js';
 import auth from '../middleware/auth.js';
-import validateRequest from '../middleware/validateRequest.js';
+import { validateRequest } from '../middleware/validateRequest.js';
 import { validateFileType } from '../services/documentService.js';
 
 const router = express.Router();
