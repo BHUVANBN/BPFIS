@@ -1,7 +1,9 @@
 import axios from 'axios'
 
+// In development, use the full backend URL
+const isDev = process.env.NODE_ENV === 'development'
 const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: isDev ? 'http://localhost:5000/api/v1' : '/api/v1',
   withCredentials: true,
 })
 

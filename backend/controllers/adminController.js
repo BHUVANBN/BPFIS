@@ -1,22 +1,37 @@
-import userModel from '../models/User.js'
-import Land from '../models/Land.js'
-import Product from '../models/Product.js'
-import Order from '../models/Order.js'
+const { getUserModel } = require('../models/User');
+const { getLandModel } = require('../models/Land');
+const Product = require('../models/Product');
+const Order = require('../models/Order');
+
+// Initialize models
+let Land;
+let Farmer;
+let Supplier;
 
 const requireAdmin = (req, res) => {
   if (req.user.role !== 'admin') {
-    res.status(403).json({ success: false, message: 'Admin only' })
-    return false
+    res.status(403).json({ success: false, message: 'Admin only' });
+    return false;
   }
-  return true
-}
+  return true;
+};
+
+// Initialize models if not already done
+const ensureModelsInitialized = async () => {
+  if (!Land) {
+    Land = await getLandModel();
+    Farmer = await getUserModel('farmer');
+    Supplier = await getUserModel('supplier');
+  }
+};
 
 const getOverview = async (req, res) => {
-  if (!requireAdmin(req, res)) return
+  if (!requireAdmin(req, res)) return;
   try {
+    await ensureModelsInitialized();
     const [farmerCount, supplierCount, productCount, landCount, pendingLands] = await Promise.all([
-      userModel.Farmer.countDocuments(),
-      userModel.Supplier.countDocuments(),
+      Farmer.countDocuments(),
+      Supplier.countDocuments(),
       Product.countDocuments(),
       Land.countDocuments({ isActive: true }),
       Land.countDocuments({ isVerified: false, isActive: true })
@@ -138,4 +153,13 @@ const reports = async (req, res) => {
   }
 }
 
-export { getOverview, listFarmers, listSuppliers, listProducts, updateProductStatus, listPendingLands, reviewLand, reports }
+module.exports = { 
+  getOverview, 
+  listFarmers, 
+  listSuppliers, 
+  listProducts, 
+  updateProductStatus, 
+  listPendingLands, 
+  reviewLand, 
+  reports 
+};

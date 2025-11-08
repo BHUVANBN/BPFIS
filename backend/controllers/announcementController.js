@@ -1,4 +1,4 @@
-import Announcement from '../models/Announcement.js'
+const Announcement = require('../models/Announcement');
 
 const listAnnouncements = async (req, res) => {
   try {
@@ -49,4 +49,9 @@ const adminDelete = async (req, res) => {
   }
 }
 
-export { listAnnouncements, adminCreate, adminUpdate, adminDelete }
+module.exports = {
+  listAnnouncements,
+  adminCreate,
+  adminUpdate,
+  adminDelete
+};

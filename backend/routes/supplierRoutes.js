@@ -1,9 +1,13 @@
-import express from 'express'
-import auth from '../middleware/auth.js'
-import { validateRequest } from '../middleware/validateRequest.js'
-import { getCompanyProfile, updateCompanyProfile, dashboardSummary } from '../controllers/supplierController.js'
-import { body } from 'express-validator'
-import { getMyCompany, upsertMyCompany } from '../controllers/companyController.js'
+const express = require('express');
+const auth = require('../middleware/auth');
+const { validateRequest } = require('../middleware/validateRequest');
+const { 
+  getCompanyProfile, 
+  updateCompanyProfile, 
+  dashboardSummary 
+} = require('../controllers/supplierController');
+const { body } = require('express-validator');
+const { getMyCompany, upsertMyCompany } = require('../controllers/companyController');
 
 const router = express.Router()
 
@@ -42,4 +46,4 @@ router.put(
   upsertMyCompany
 )
 
-export default router
+module.exports = router;

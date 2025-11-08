@@ -1,5 +1,5 @@
-import { validationResult } from 'express-validator';
-import { BadRequestError } from '../utils/errors.js';
+const { validationResult } = require('express-validator');
+const { BadRequestError } = require('../utils/errors');
 
 /**
  * Middleware to validate request using express-validator
@@ -7,7 +7,7 @@ import { BadRequestError } from '../utils/errors.js';
  * @param {import('express').Response} res - Express response object
  * @param {import('express').NextFunction} next - Express next function
  */
-export const validateRequest = (req, res, next) => {
+const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
   
   if (!errors.isEmpty()) {
@@ -29,8 +29,8 @@ export const validateRequest = (req, res, next) => {
  * @param {Function} fn - Async route handler function
  * @returns {Function} Wrapped route handler with error handling
  */
-export const asyncHandler = (fn) => {
-  return (req, res, next) => {
+const asyncHandler = function(fn) {
+  return function(req, res, next) {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };
@@ -42,7 +42,7 @@ export const asyncHandler = (fn) => {
  * @param {import('express').Response} res - Express response object
  * @param {import('express').NextFunction} next - Express next function
  */
-export const errorHandler = (err, req, res, next) => {
+const errorHandler = function(err, req, res, next) {
   console.error(`[${new Date().toISOString()}] ${req.method} ${req.path}`, {
     error: {
       message: err.message,
@@ -77,9 +77,16 @@ export const errorHandler = (err, req, res, next) => {
  * @param {import('express').Response} res - Express response object
  * @param {import('express').NextFunction} next - Express next function
  */
-export const notFoundHandler = (req, res, next) => {
+const notFoundHandler = function(req, res, next) {
   res.status(404).json({
     success: false,
     message: `Cannot ${req.method} ${req.originalUrl}`
   });
+};
+
+module.exports = {
+  validateRequest,
+  asyncHandler,
+  errorHandler,
+  notFoundHandler
 };

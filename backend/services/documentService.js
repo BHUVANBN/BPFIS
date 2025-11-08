@@ -1,7 +1,7 @@
-import { uploadToIPFS } from './ipfsService.js';
-import { extractLandData } from './ocrService.js';
-import { v4 as uuidv4 } from 'uuid';
-import path from 'path';
+const { uploadToIPFS } = require('./ipfsService');
+const { extractLandData } = require('./ocrService');
+const { v4: uuidv4 } = require('uuid');
+const path = require('path');
 
 /**
  * Processes and validates a land document
@@ -9,7 +9,7 @@ import path from 'path';
  * @param {string} documentType - Type of document (RTC, AADHAAR, etc.)
  * @returns {Promise<Object>} - Processed document data
  */
-export const processLandDocument = async (file, documentType) => {
+const processLandDocument = async (file, documentType) => {
   try {
     // 1. Upload to IPFS
     const ipfsResult = await uploadToIPFS(
@@ -59,7 +59,7 @@ export const processLandDocument = async (file, documentType) => {
  * @param {Object} landData - Existing land data for validation
  * @returns {Object} - Validation result
  */
-export const validateDocument = (document, landData = {}) => {
+const validateDocument = (document, landData = {}) => {
   const result = {
     isValid: true,
     issues: [],
@@ -129,7 +129,7 @@ const normalizeText = (text) => {
  * @param {string} filename - The filename or path
  * @returns {string} - The file extension (without dot)
  */
-export const getFileExtension = (filename) => {
+const getFileExtension = (filename) => {
   return path.extname(filename || '').slice(1).toLowerCase();
 };
 
@@ -139,10 +139,19 @@ export const getFileExtension = (filename) => {
  * @param {Array<string>} allowedTypes - Allowed MIME types
  * @returns {boolean} - Whether the file type is allowed
  */
-export const validateFileType = (file, allowedTypes = [
+const validateFileType = (file, allowedTypes = [
   'image/jpeg',
   'image/png',
   'application/pdf'
 ]) => {
   return file && allowedTypes.includes(file.mimetype);
+};
+
+// Export all functions
+module.exports = {
+  processLandDocument,
+  validateDocument,
+  validateFileType,
+  normalizeText,
+  getFileExtension
 };

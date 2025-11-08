@@ -1,5 +1,5 @@
-import Message from '../models/Message.js'
-import mongoose from 'mongoose'
+const Message = require('../models/Message');
+const mongoose = require('mongoose');
 
 const makeThreadId = (a, b) => {
   const [x, y] = [a.toString(), b.toString()].sort()
@@ -76,4 +76,9 @@ const markRead = async (req, res) => {
   }
 }
 
-export { createMessage, listThreads, getThread, markRead }
+module.exports = { 
+  createMessage, 
+  listThreads, 
+  getThread, 
+  markRead 
+};

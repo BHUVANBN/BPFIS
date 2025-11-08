@@ -1,6 +1,6 @@
-import express from 'express';
-import auth from '../middleware/auth.js';
-import { getCurrentUser, updateProfile } from '../controllers/userController.js';
+const express = require('express');
+const auth = require('../middleware/auth');
+const { getCurrentUser, updateProfile } = require('../controllers/userController');
 
 const router = express.Router();
 
@@ -17,4 +17,4 @@ router.get('/me', getCurrentUser);
 // @access  Private
 router.put('/me', updateProfile);
 
-export default router;
+module.exports = router;

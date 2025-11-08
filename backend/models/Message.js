@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+const mongoose = require('mongoose');
 
 const messageSchema = new mongoose.Schema(
   {
@@ -17,6 +17,6 @@ const messageSchema = new mongoose.Schema(
 )
 
 messageSchema.index({ senderId: 1, recipientId: 1, createdAt: -1 })
-messageSchema.index({ threadId: 1, createdAt: -1 })
+messageSchema.index({ threadId: 1, createdAt: -1 });
 
-export default mongoose.models.Message || mongoose.model('Message', messageSchema)
+module.exports = mongoose.models.Message || mongoose.model('Message', messageSchema);

@@ -1,9 +1,21 @@
-import express from 'express'
-import auth from '../middleware/auth.js'
-import { validateRequest } from '../middleware/validateRequest.js'
-import { body, param, query } from 'express-validator'
-import { getOverview, listFarmers, listSuppliers, listProducts, updateProductStatus, listPendingLands, reviewLand, reports } from '../controllers/adminController.js'
-import { adminListCompanies, adminUpdateCompanyStatus } from '../controllers/companyController.js'
+const express = require('express');
+const auth = require('../middleware/auth');
+const { validateRequest } = require('../middleware/validateRequest');
+const { body, param, query } = require('express-validator');
+const { 
+  getOverview, 
+  listFarmers, 
+  listSuppliers, 
+  listProducts, 
+  updateProductStatus, 
+  listPendingLands, 
+  reviewLand, 
+  reports 
+} = require('../controllers/adminController');
+const { 
+  adminListCompanies, 
+  adminUpdateCompanyStatus 
+} = require('../controllers/companyController');
 
 const router = express.Router()
 
@@ -58,4 +70,4 @@ router.patch(
   adminUpdateCompanyStatus
 )
 
-export default router
+module.exports = router;

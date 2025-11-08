@@ -114,7 +114,7 @@ class InternalServerError extends AppError {
   }
 }
 
-export {
+module.exports = {
   AppError,
   BadRequestError,
   UnauthorizedError,

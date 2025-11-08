@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
-import userModel from '../models/User.js';
+const jwt = require('jsonwebtoken');
+const { getUserModel } = require('../models/User');
 
 const auth = (roles = []) => {
   return async (req, res, next) => {
@@ -18,7 +18,7 @@ const auth = (roles = []) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
       
       // Get user from appropriate database
-      const User = userModel.getUserModel(decoded.role);
+      const User = getUserModel(decoded.role);
       const user = await User.findById(decoded.userId);
 
       if (!user) {
@@ -48,4 +48,4 @@ const auth = (roles = []) => {
   };
 };
 
-export default auth;
+module.exports = auth;

@@ -1,7 +1,7 @@
-import userModel from '../models/User.js';
-import { generateOTP, storeOTP, verifyOTP } from '../utils/otp.js';
-import { validationResult } from 'express-validator';
-import jwt from 'jsonwebtoken';
+const User = require('../models/User');
+const { validationResult } = require('express-validator');
+const jwt = require('jsonwebtoken');
+const { sendOTP: sendOTPService, verifyOTPService } = require('../services/sms.service');
 
 const generateToken = (user) => {
   return jwt.sign(
@@ -25,21 +25,28 @@ const sendOTP = async (req, res) => {
   const { phone } = req.body;
   
   try {
-    // In production: Integrate with SMS service like Twilio
-    const otp = generateOTP();
-    storeOTP(phone, otp);
+    // Send OTP via SMS service
+    const result = await sendOTPService(phone);
     
-    console.log(`OTP for ${phone}: ${otp}`); // Remove in production
+    if (!result.success) {
+      return res.status(500).json({ 
+        success: false, 
+        message: result.message || 'Failed to send OTP',
+        error: result.error
+      });
+    }
     
     res.status(200).json({ 
       success: true, 
-      message: 'OTP sent successfully' 
+      message: 'OTP sent successfully',
+      sid: result.sid
     });
   } catch (error) {
     console.error('Error sending OTP:', error);
     res.status(500).json({ 
       success: false, 
-      message: 'Error sending OTP' 
+      message: 'Error sending OTP',
+      error: error.message 
     });
   }
 };
@@ -55,11 +62,11 @@ const verifyUser = async (req, res) => {
   
   try {
     // Verify OTP
-    const { valid, message } = verifyOTP(phone, otp);
+    const { valid, message } = verifyOTPService(phone, otp);
     if (!valid) {
       return res.status(400).json({ 
         success: false, 
-        message 
+        message: message || 'Invalid or expired OTP'
       });
     }
 
@@ -130,4 +137,4 @@ const verifyUser = async (req, res) => {
   }
 };
 
-export { sendOTP, verifyUser };
+module.exports = { sendOTP, verifyUser };

@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { farmerDB } from '../config/db.js';
+const mongoose = require('mongoose');
+const { farmerDB } = require('../config/db');
 
 // Sub-schema for land documents
 const documentSchema = new mongoose.Schema({
@@ -201,7 +201,53 @@ landSchema.statics.findNearby = function(coordinates, maxDistance = 10000) {
   });
 };
 
-// Create and export the model
-const Land = farmerDB().model('Land', landSchema);
+// Function to initialize Land model
+const initializeLandModel = async () => {
+  try {
+    const farmerConn = await farmerDB();
+    // Check if model already exists
+    if (mongoose.models.Land) {
+      return mongoose.models.Land;
+    }
+    // Create and return the model
+    return farmerConn.model('Land', landSchema);
+  } catch (error) {
+    console.error('Error initializing Land model:', error);
+    throw error;
+  }
+};
 
-export default Land;
+// Initialize and export the model
+let Land;
+let landModelPromise = null;
+
+const getLandModel = async () => {
+  if (!landModelPromise) {
+    landModelPromise = initializeLandModel()
+      .then(model => {
+        Land = model;
+        console.log('Land model initialized successfully');
+        return Land;
+      })
+      .catch(err => {
+        console.error('Failed to initialize Land model:', err);
+        process.exit(1);
+      });
+  }
+  return landModelPromise;
+};
+
+// Immediately start initializing the model
+getLandModel().catch(console.error);
+
+// Export the model and the initialize function
+module.exports = {
+  get Land() {
+    if (!Land) {
+      throw new Error('Land model not initialized. Use getLandModel() for async initialization.');
+    }
+    return Land;
+  },
+  initializeLandModel,
+  getLandModel
+};

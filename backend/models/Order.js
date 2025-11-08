@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+const mongoose = require('mongoose')
 
 const orderItemSchema = new mongoose.Schema(
   {
@@ -118,4 +118,4 @@ const orderSchema = new mongoose.Schema(
 orderSchema.index({ buyerId: 1, createdAt: -1 })
 orderSchema.index({ supplierId: 1, createdAt: -1 })
 
-export default mongoose.models.Order || mongoose.model('Order', orderSchema)
+module.exports = mongoose.models.Order || mongoose.model('Order', orderSchema)

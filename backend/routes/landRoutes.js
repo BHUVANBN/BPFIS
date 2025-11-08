@@ -1,16 +1,16 @@
-import express from 'express';
-import { body, param } from 'express-validator';
-import multer from 'multer';
-import { 
+const express = require('express');
+const { body, param } = require('express-validator');
+const multer = require('multer');
+const { 
   registerLand, 
   getMyLands, 
   getLandById, 
   updateLand, 
   deleteLand, 
   addDocument 
-} from '../controllers/landController.js';
-import auth from '../middleware/auth.js';
-import validateRequest from '../middleware/validateRequest.js';
+} = require('../controllers/landController.js');
+const auth = require('../middleware/auth.js');
+const { validateRequest } = require('../middleware/validateRequest.js');
 
 const router = express.Router();
 const upload = multer({
@@ -132,4 +132,4 @@ router.post(
   addDocument
 );
 
-export default router;
+module.exports = router;

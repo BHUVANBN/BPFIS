@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+const mongoose = require('mongoose')
 
 const addressSchema = new mongoose.Schema(
   {
@@ -35,4 +35,4 @@ const companySchema = new mongoose.Schema(
 
 companySchema.index({ name: 'text', description: 'text', servicesOffered: 1 })
 
-export default mongoose.models.Company || mongoose.model('Company', companySchema)
+module.exports = mongoose.models.Company || mongoose.model('Company', companySchema)

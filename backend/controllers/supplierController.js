@@ -1,11 +1,11 @@
-import userModel from '../models/User.js'
-import Product from '../models/Product.js'
-import Order from '../models/Order.js'
+const { getUserModel } = require('../models/User')
+const Product = require('../models/Product')
+const Order = require('../models/Order')
 
 const getCompanyProfile = async (req, res) => {
   try {
     if (req.user.role !== 'supplier') return res.status(403).json({ success: false, message: 'Forbidden' })
-    const User = userModel.getUserModel('supplier')
+    const User = getUserModel('supplier')
     const user = await User.findById(req.user._id).select('-passwordHash -__v')
     if (!user) return res.status(404).json({ success: false, message: 'Not found' })
     res.status(200).json({ success: true, data: user })
@@ -17,7 +17,7 @@ const getCompanyProfile = async (req, res) => {
 const updateCompanyProfile = async (req, res) => {
   try {
     if (req.user.role !== 'supplier') return res.status(403).json({ success: false, message: 'Forbidden' })
-    const User = userModel.getUserModel('supplier')
+    const User = getUserModel('supplier')
     const user = await User.findById(req.user._id)
     if (!user) return res.status(404).json({ success: false, message: 'Not found' })
     const allowed = ['name','email','profilePic','company']
@@ -53,4 +53,4 @@ const dashboardSummary = async (req, res) => {
   }
 }
 
-export { getCompanyProfile, updateCompanyProfile, dashboardSummary }
+module.exports = { getCompanyProfile, updateCompanyProfile, dashboardSummary }

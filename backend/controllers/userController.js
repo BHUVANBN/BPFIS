@@ -1,12 +1,12 @@
-import userModel from '../models/User.js';
-import auth from '../middleware/auth.js';
+const { getUserModel } = require('../models/User');
+const auth = require('../middleware/auth');
 
 // @desc    Get user profile
 // @route   GET /api/users/me
 // @access  Private
 const getCurrentUser = async (req, res) => {
   try {
-    const User = userModel.getUserModel(req.user.role);
+    const User = getUserModel(req.user.role);
     const user = await User.findById(req.user._id)
       .select('-passwordHash -__v')
       .lean();
@@ -36,7 +36,7 @@ const getCurrentUser = async (req, res) => {
 // @access  Private
 const updateProfile = async (req, res) => {
   try {
-    const User = userModel.getUserModel(req.user.role);
+    const User = getUserModel(req.user.role);
     const updates = Object.keys(req.body);
     const allowedUpdates = ['name', 'email', 'profilePic', 'company'];
     const isValidOperation = updates.every(update => 
@@ -83,4 +83,4 @@ const updateProfile = async (req, res) => {
   }
 };
 
-export { getCurrentUser, updateProfile };
+module.exports = { getCurrentUser, updateProfile };

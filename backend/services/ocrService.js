@@ -1,8 +1,8 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { writeFileSync, unlinkSync } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
-import { GOOGLE_AI_API_KEY } from '../config/config.js';
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { writeFileSync, unlinkSync } = require('fs');
+const { tmpdir } = require('os');
+const { join } = require('path');
+const { GOOGLE_AI_API_KEY } = require('../config/config');
 
 // Initialize Google's Generative AI
 const genAI = new GoogleGenerativeAI(GOOGLE_AI_API_KEY);
@@ -13,7 +13,7 @@ const genAI = new GoogleGenerativeAI(GOOGLE_AI_API_KEY);
  * @param {string} mimeType - The MIME type of the file
  * @returns {Promise<Object>} - The extracted data
  */
-export const extractLandData = async (fileBuffer, mimeType) => {
+const extractLandData = async (fileBuffer, mimeType) => {
   try {
     // For the MVP, we'll use a simple text extraction approach
     // In a production environment, you would use a more sophisticated OCR service
@@ -149,7 +149,7 @@ export const extractLandData = async (fileBuffer, mimeType) => {
  * @param {Object} landData - The existing land data to validate against
  * @returns {Object} - Validation result with matches and confidence
  */
-export const validateExtractedData = (extractedData, landData) => {
+const validateExtractedData = (extractedData, landData) => {
   const result = {
     isValid: true,
     confidence: 1,
@@ -190,4 +190,9 @@ export const validateExtractedData = (extractedData, landData) => {
   result.confidence = Math.max(0, Math.min(1, result.confidence));
   
   return result;
+};
+
+module.exports = {
+  extractLandData,
+  validateExtractedData
 };

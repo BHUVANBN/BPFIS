@@ -1,15 +1,15 @@
-import express from 'express';
-import { body, param } from 'express-validator';
-import multer from 'multer';
-import {
+const express = require('express');
+const { body, param } = require('express-validator');
+const multer = require('multer');
+const {
   uploadLandDocument,
   getLandDocuments,
   verifyDocument,
   deleteDocument
-} from '../controllers/documentController.js';
-import auth from '../middleware/auth.js';
-import { validateRequest } from '../middleware/validateRequest.js';
-import { validateFileType } from '../services/documentService.js';
+} = require('../controllers/documentController');
+const auth = require('../middleware/auth');
+const { validateRequest } = require('../middleware/validateRequest');
+const { validateFileType } = require('../services/documentService');
 
 const router = express.Router();
 
@@ -87,4 +87,4 @@ router.delete(
   deleteDocument
 );
 
-export default router;
+module.exports = router;

@@ -1,8 +1,13 @@
-import express from 'express'
-import { validateRequest } from '../middleware/validateRequest.js'
-import { body, param, query } from 'express-validator'
-import { listAnnouncements, adminCreate, adminUpdate, adminDelete } from '../controllers/announcementController.js'
-import auth from '../middleware/auth.js'
+const express = require('express');
+const { validateRequest } = require('../middleware/validateRequest');
+const { body, param, query } = require('express-validator');
+const { 
+  listAnnouncements, 
+  adminCreate, 
+  adminUpdate, 
+  adminDelete 
+} = require('../controllers/announcementController');
+const auth = require('../middleware/auth');
 
 const router = express.Router()
 
@@ -39,4 +44,4 @@ router.put(
 
 router.delete('/admin/:id', [param('id').isMongoId(), validateRequest], adminDelete)
 
-export default router
+module.exports = router;

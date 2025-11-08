@@ -1,8 +1,13 @@
-import express from 'express'
-import auth from '../middleware/auth.js'
-import { validateRequest } from '../middleware/validateRequest.js'
-import { body, param, query } from 'express-validator'
-import { createMessage, listThreads, getThread, markRead } from '../controllers/messageController.js'
+const express = require('express');
+const auth = require('../middleware/auth');
+const { validateRequest } = require('../middleware/validateRequest');
+const { body, param, query } = require('express-validator');
+const { 
+  createMessage, 
+  listThreads, 
+  getThread, 
+  markRead 
+} = require('../controllers/messageController');
 
 const router = express.Router()
 
@@ -33,6 +38,13 @@ router.get(
   getThread
 )
 
-router.patch('/:id/read', [param('id').isMongoId(), validateRequest], markRead)
+router.patch(
+  '/:id/read', 
+  [
+    param('id').isMongoId(), 
+    validateRequest
+  ], 
+  markRead
+);
 
-export default router
+module.exports = router;

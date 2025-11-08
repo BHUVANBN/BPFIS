@@ -1,8 +1,16 @@
-import express from 'express'
-import auth from '../middleware/auth.js'
-import { validateRequest } from '../middleware/validateRequest.js'
-import { body, param, query } from 'express-validator'
-import { createProduct, updateProduct, deleteProduct, getProductById, listMyProducts, listActiveProducts, supplierAnalytics } from '../controllers/productController.js'
+const express = require('express');
+const auth = require('../middleware/auth');
+const { validateRequest } = require('../middleware/validateRequest');
+const { body, param, query } = require('express-validator');
+const { 
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getProductById,
+  listMyProducts,
+  listActiveProducts,
+  supplierAnalytics
+} = require('../controllers/productController');
 
 const router = express.Router()
 
@@ -74,4 +82,4 @@ router.put(
 
 router.delete('/:id', [param('id').isMongoId(), validateRequest], deleteProduct)
 
-export default router
+module.exports = router;

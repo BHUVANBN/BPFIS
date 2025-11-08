@@ -1,8 +1,16 @@
-import Land from '../models/Land.js'
-import Product from '../models/Product.js'
+const { getLandModel } = require('../models/Land');
+const Product = require('../models/Product');
+
+// This will be initialized when the controller is first used
+let Land;
 
 const dashboardSummary = async (req, res) => {
   try {
+    // Ensure Land model is initialized
+    if (!Land) {
+      Land = await getLandModel();
+    }
+    
     const [landCount, verifiedLands] = await Promise.all([
       Land.countDocuments({ farmer: req.user._id, isActive: true }),
       Land.countDocuments({ farmer: req.user._id, isActive: true, isVerified: true })
@@ -15,6 +23,11 @@ const dashboardSummary = async (req, res) => {
 
 const listNearbyFarmers = async (req, res) => {
   try {
+    // Ensure Land model is initialized
+    if (!Land) {
+      Land = await getLandModel();
+    }
+    
     const { lng, lat, distance } = req.query
     if (!lng || !lat) return res.status(400).json({ success: false, message: 'lng and lat are required' })
     const maxDistance = distance ? parseInt(distance) : 10000
@@ -72,4 +85,4 @@ const getSchemes = async (req, res) => {
   }
 }
 
-export { dashboardSummary, listNearbyFarmers, listStoreProducts, getWeatherForecast, getPricePrediction, getSchemes }
+module.exports = { dashboardSummary, listNearbyFarmers, listStoreProducts, getWeatherForecast, getPricePrediction, getSchemes }

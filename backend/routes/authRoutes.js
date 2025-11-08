@@ -1,8 +1,10 @@
-import express from 'express';
-import { sendOTP, verifyUser } from '../controllers/authController.js';
-import { validateSendOTP, validateVerifyOTP, validate } from '../middleware/validation.js';
+const express = require('express');
+const { sendOTP, verifyUser } = require('../controllers/authController');
+const { validateSendOTP, validateVerifyOTP, validate } = require('../middleware/validation');
 
 const router = express.Router();
+
+// Auth routes are public and don't require authentication
 
 // @route   POST /api/auth/send-otp
 // @desc    Send OTP to user's phone
@@ -14,4 +16,4 @@ router.post('/send-otp', validateSendOTP, validate, sendOTP);
 // @access  Public
 router.post('/verify', validateVerifyOTP, validate, verifyUser);
 
-export default router;
+module.exports = router;

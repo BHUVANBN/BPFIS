@@ -1,4 +1,4 @@
-import { body, validationResult } from 'express-validator';
+const { body, validationResult } = require('express-validator');
 
 // Validation rules for sending OTP
 const validateSendOTP = [
@@ -52,4 +52,4 @@ const validate = (req, res, next) => {
   });
 };
 
-export { validateSendOTP, validateVerifyOTP, validate };
+module.exports = { validateSendOTP, validateVerifyOTP, validate };

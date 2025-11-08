@@ -1,15 +1,23 @@
-import Land from '../models/Land.js';
-import { uploadToIPFS } from '../services/ipfsService.js';
-import { extractLandData } from '../services/ocrService.js';
-import { validationResult } from 'express-validator';
+const { getLandModel } = require('../models/Land');
+
+// This will be initialized when the controller is first used
+let Land;
+const { uploadToIPFS } = require('../services/ipfsService');
+const { extractLandData } = require('../services/ocrService');
+const { validationResult } = require('express-validator');
 
 /**
  * @desc    Register a new land
  * @route   POST /api/lands
  * @access  Private (Farmer only)
  */
-export const registerLand = async (req, res) => {
+const registerLand = async (req, res) => {
   try {
+    // Initialize Land model if not already done
+    if (!Land) {
+      Land = await getLandModel();
+    }
+
     // Validate request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -66,12 +74,12 @@ export const registerLand = async (req, res) => {
     if (documents && documents.length > 0) {
       for (const doc of documents) {
         // Upload to IPFS
-        const ipfsResult = await uploadToIPFS(doc.buffer, doc.mimetype);
+        const ipfsResult = await ipfsService.uploadToIPFS(doc.buffer, doc.mimetype);
         
         // Extract data from document if it's an image or PDF
         let ocrData = {};
         if (doc.mimetype.startsWith('image/') || doc.mimetype === 'application/pdf') {
-          ocrData = await extractLandData(doc.buffer, doc.mimetype);
+          ocrData = await ocrService.extractLandData(doc.buffer, doc.mimetype);
         }
 
         land.documents.push({
@@ -107,7 +115,7 @@ export const registerLand = async (req, res) => {
  * @route   GET /api/lands/my-lands
  * @access  Private (Farmer only)
  */
-export const getMyLands = async (req, res) => {
+const getMyLands = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -144,7 +152,7 @@ export const getMyLands = async (req, res) => {
  * @route   GET /api/lands/:id
  * @access  Private
  */
-export const getLandById = async (req, res) => {
+const getLandById = async (req, res) => {
   try {
     const land = await Land.findOne({
       _id: req.params.id,
@@ -184,7 +192,7 @@ export const getLandById = async (req, res) => {
  * @route   PUT /api/lands/:id
  * @access  Private (Land owner or admin)
  */
-export const updateLand = async (req, res) => {
+const updateLand = async (req, res) => {
   try {
     const updates = Object.keys(req.body);
     const allowedUpdates = ['surveyNumber', 'area', 'location', 'soilType', 'irrigation', 'ownershipType'];
@@ -247,7 +255,7 @@ export const updateLand = async (req, res) => {
  * @route   DELETE /api/lands/:id
  * @access  Private (Land owner or admin)
  */
-export const deleteLand = async (req, res) => {
+const deleteLand = async (req, res) => {
   try {
     const land = await Land.findOne({
       _id: req.params.id,
@@ -291,7 +299,7 @@ export const deleteLand = async (req, res) => {
  * @route   POST /api/lands/:id/documents
  * @access  Private (Land owner or admin)
  */
-export const addDocument = async (req, res) => {
+const addDocument = async (req, res) => {
   try {
     const { documentType } = req.body;
     const file = req.file;
@@ -356,4 +364,14 @@ export const addDocument = async (req, res) => {
       message: 'Server error'
     });
   }
+};
+
+// Export all controller functions
+module.exports = {
+  registerLand,
+  getMyLands,
+  getLandById,
+  updateLand,
+  deleteLand,
+  addDocument
 };

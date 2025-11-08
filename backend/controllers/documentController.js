@@ -1,14 +1,14 @@
-import { validationResult } from 'express-validator';
-import { processLandDocument, validateDocument } from '../services/documentService.js';
-import Land from '../models/Land.js';
-import { Types } from 'mongoose';
+const { validationResult } = require('express-validator');
+const { processLandDocument, validateDocument } = require('../services/documentService');
+const { Land } = require('../models/Land');
+const { Types } = require('mongoose');
 
 /**
  * @desc    Upload and process a document for a land
  * @route   POST /api/lands/:landId/documents
  * @access  Private (Farmer only)
  */
-export const uploadLandDocument = async (req, res) => {
+const uploadLandDocument = async (req, res) => {
   try {
     // Validate request
     const errors = validationResult(req);
@@ -78,7 +78,7 @@ export const uploadLandDocument = async (req, res) => {
  * @route   GET /api/lands/:landId/documents
  * @access  Private (Owner/Admin)
  */
-export const getLandDocuments = async (req, res) => {
+const getLandDocuments = async (req, res) => {
   try {
     const { landId } = req.params;
 
@@ -119,7 +119,7 @@ export const getLandDocuments = async (req, res) => {
  * @route   PUT /api/lands/:landId/documents/:documentId/verify
  * @access  Private (Admin only)
  */
-export const verifyDocument = async (req, res) => {
+const verifyDocument = async (req, res) => {
   try {
     const { landId, documentId } = req.params;
     const { isVerified, notes } = req.body;
@@ -179,7 +179,7 @@ export const verifyDocument = async (req, res) => {
  * @route   DELETE /api/lands/:landId/documents/:documentId
  * @access  Private (Owner/Admin)
  */
-export const deleteDocument = async (req, res) => {
+const deleteDocument = async (req, res) => {
   try {
     const { landId, documentId } = req.params;
 
@@ -234,7 +234,7 @@ export const deleteDocument = async (req, res) => {
  * Helper function to update land verification status based on documents
  * @param {Object} land - The land document
  */
-const updateLandVerificationStatus = async (land) => {
+const updateLandVerificationStatus = (land) => {
   try {
     // Count verified documents
     const verifiedCount = land.documents.filter(doc => doc.verified && !doc.isDeleted).length;
@@ -245,16 +245,17 @@ const updateLandVerificationStatus = async (land) => {
                              verifiedCount === totalDocuments ? 'verified' :
                              verifiedCount > 0 ? 'partially_verified' : 'pending';
     
-    await land.save();
+    land.save();
   } catch (error) {
     console.error('Error updating land verification status:', error);
     throw error;
   }
 };
 
-export default {
+module.exports = {
   uploadLandDocument,
   getLandDocuments,
   verifyDocument,
-  deleteDocument
+  deleteDocument,
+  updateLandVerificationStatus
 };

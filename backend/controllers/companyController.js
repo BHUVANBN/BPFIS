@@ -1,4 +1,4 @@
-import Company from '../models/Company.js'
+const Company = require('../models/Company')
 
 const getMyCompany = async (req, res) => {
   try {
@@ -65,4 +65,4 @@ const adminUpdateCompanyStatus = async (req, res) => {
   }
 }
 
-export { getMyCompany, upsertMyCompany, adminListCompanies, adminUpdateCompanyStatus }
+module.exports = { getMyCompany, upsertMyCompany, adminListCompanies, adminUpdateCompanyStatus }

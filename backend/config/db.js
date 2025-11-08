@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-const DEFAULT_URI = 'mongodb://127.0.0.1:27017';
+const DEFAULT_URI = 'mongodb+srv://bhuvanbn01_db_user:JxtgUj7f3vVZm89c@cluster0.rkbd9dx.mongodb.net/BPFIS?retryWrites=true&w=majority&appName=Cluster0';
 const DB_NAMES = {
   FARMER: 'farmchain_farmers',
   SUPPLIER: 'farmchain_suppliers',
@@ -10,8 +10,8 @@ const DB_NAMES = {
 const connections = {};
 
 const connectDB = async (dbName) => {
-  const uri = process.env.MONGODB_URI || DEFAULT_URI;
-  const dbUri = `${uri}/${dbName}`;
+  // Use the default URI directly since it's already the full connection string
+  const uri = DEFAULT_URI; // Directly use the Atlas connection string
 
   // Return existing connection if available
   if (connections[dbName]) {
@@ -20,12 +20,12 @@ const connectDB = async (dbName) => {
 
   try {
     mongoose.set('strictQuery', true);
-    const conn = await mongoose.createConnection(dbUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const conn = await mongoose.createConnection(uri, {
+      // Remove deprecated options for newer MongoDB driver
+      // useNewUrlParser and useUnifiedTopology are not needed in MongoDB Node.js Driver v4.0.0 and above
+    }).asPromise();
 
-    console.log(`MongoDB connected: ${uri}/${dbName}`);
+    console.log(`MongoDB connected to Atlas cluster`);
     connections[dbName] = conn;
     return conn;
   } catch (err) {
@@ -34,17 +34,18 @@ const connectDB = async (dbName) => {
   }
 };
 
-const farmerDB = () => connectDB(DB_NAMES.FARMER);
-const supplierDB = () => connectDB(DB_NAMES.SUPPLIER);
-const adminDB = () => connectDB(DB_NAMES.ADMIN);
+// Create connections
+const farmerDB = () => connections[DB_NAMES.FARMER] || connectDB(DB_NAMES.FARMER);
+const supplierDB = () => connections[DB_NAMES.SUPPLIER] || connectDB(DB_NAMES.SUPPLIER);
+const adminDB = () => connections[DB_NAMES.ADMIN] || connectDB(DB_NAMES.ADMIN);
 
 // Initialize all connections on startup
 const initializeConnections = async () => {
   try {
     await Promise.all([
-      farmerDB(),
-      supplierDB(),
-      adminDB()
+      connectDB(DB_NAMES.FARMER),
+      connectDB(DB_NAMES.SUPPLIER),
+      connectDB(DB_NAMES.ADMIN)
     ]);
     console.log('All database connections established');
   } catch (error) {
@@ -53,12 +54,11 @@ const initializeConnections = async () => {
   }
 };
 
-export {
+module.exports = {
   farmerDB,
   supplierDB,
   adminDB,
   initializeConnections,
-  DB_NAMES
+  DB_NAMES,
+  connectDB
 };
-
-export default connectDB;

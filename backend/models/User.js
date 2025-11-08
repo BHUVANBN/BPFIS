@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { farmerDB, supplierDB, adminDB } from '../config/db.js';
+const mongoose = require('mongoose');
+const { farmerDB, supplierDB, adminDB } = require('../config/db');
 
 // Common user schema
 const userSchema = new mongoose.Schema(
@@ -100,9 +100,27 @@ userSchema.pre('save', function(next) {
 });
 
 // Create models for each database
-const Farmer = farmerDB().model('User', userSchema);
-const Supplier = supplierDB().model('User', userSchema);
-const Admin = adminDB().model('User', userSchema);
+let Farmer, Supplier, Admin;
+
+// Function to initialize models
+const initializeModels = async () => {
+  try {
+    const [farmerConn, supplierConn, adminConn] = await Promise.all([
+      farmerDB(),
+      supplierDB(),
+      adminDB()
+    ]);
+    
+    Farmer = farmerConn.model('User', userSchema);
+    Supplier = supplierConn.model('User', userSchema);
+    Admin = adminConn.model('User', userSchema);
+    
+    return { Farmer, Supplier, Admin };
+  } catch (error) {
+    console.error('Error initializing models:', error);
+    throw error;
+  }
+};
 
 // Static methods
 userSchema.statics.findByPhone = async function(phone) {
@@ -113,18 +131,22 @@ userSchema.statics.findByEmail = async function(email) {
   return this.findOne({ email: email.toLowerCase() });
 };
 
-export { Farmer, Supplier, Admin };
-
-export default {
+// Export models
+module.exports = {
   Farmer,
   Supplier,
   Admin,
+  initializeModels,
   getUserModel: (role) => {
     switch (role) {
-      case 'farmer': return Farmer;
-      case 'supplier': return Supplier;
-      case 'admin': return Admin;
-      default: throw new Error('Invalid user role');
+      case 'farmer':
+        return Farmer;
+      case 'supplier':
+        return Supplier;
+      case 'admin':
+        return Admin;
+      default:
+        throw new Error(`Invalid role: ${role}`);
     }
   }
 };

@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+const mongoose = require('mongoose');
 
 const announcementSchema = new mongoose.Schema(
   {
@@ -17,4 +17,4 @@ const announcementSchema = new mongoose.Schema(
 
 announcementSchema.index({ title: 'text', body: 'text' })
 
-export default mongoose.models.Announcement || mongoose.model('Announcement', announcementSchema)
+module.exports = mongoose.models.Announcement || mongoose.model('Announcement', announcementSchema);

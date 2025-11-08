@@ -1,8 +1,8 @@
-import axios from 'axios';
-import FormData from 'form-data';
-import fs from 'fs';
-import path from 'path';
-import { PINATA_API_KEY, PINATA_SECRET_API_KEY } from '../config/config.js';
+const axios = require('axios');
+const FormData = require('form-data');
+const fs = require('fs');
+const path = require('path');
+const { PINATA_API_KEY, PINATA_SECRET_API_KEY } = require('../config/config');
 
 /**
  * Uploads a file to IPFS using Pinata
@@ -10,7 +10,7 @@ import { PINATA_API_KEY, PINATA_SECRET_API_KEY } from '../config/config.js';
  * @param {string} fileType - The MIME type of the file
  * @returns {Promise<Object>} - The IPFS hash and URL
  */
-export const uploadToIPFS = async (fileBuffer, fileType) => {
+const uploadToIPFS = async (fileBuffer, fileType) => {
   try {
     const url = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
     
@@ -64,7 +64,7 @@ export const uploadToIPFS = async (fileBuffer, fileType) => {
  * @param {Object} data - The JSON data to pin
  * @returns {Promise<Object>} - The IPFS hash and URL
  */
-export const pinJSONToIPFS = async (data) => {
+const pinJSONToIPFS = async (data) => {
   try {
     const url = 'https://api.pinata.cloud/pinning/pinJSONToIPFS';
     
@@ -104,7 +104,7 @@ export const pinJSONToIPFS = async (data) => {
  * @param {string} ipfsHash - The IPFS hash of the file
  * @returns {Promise<Buffer>} - The file data as a buffer
  */
-export const getFromIPFS = async (ipfsHash) => {
+const getFromIPFS = async (ipfsHash) => {
   try {
     const url = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
     const response = await axios.get(url, { responseType: 'arraybuffer' });
@@ -121,7 +121,7 @@ export const getFromIPFS = async (ipfsHash) => {
  * @param {string} outputPath - The path to save the file to
  * @returns {Promise<string>} - The path to the saved file
  */
-export const saveFileFromIPFS = async (ipfsHash, outputPath) => {
+const saveFileFromIPFS = async (ipfsHash, outputPath) => {
   try {
     const fileData = await getFromIPFS(ipfsHash);
     
@@ -138,4 +138,29 @@ export const saveFileFromIPFS = async (ipfsHash, outputPath) => {
     console.error('Error saving file from IPFS:', error);
     throw new Error('Failed to save file from IPFS');
   }
+};
+
+// Remove a file from IPFS
+const removeFromIPFS = async (ipfsHash) => {
+  try {
+    const url = `https://api.pinata.cloud/pinning/unpin/${ipfsHash}`;
+    await axios.delete(url, {
+      headers: {
+        'pinata_api_key': PINATA_API_KEY,
+        'pinata_secret_api_key': PINATA_SECRET_API_KEY
+      }
+    });
+    return true;
+  } catch (error) {
+    console.error('Error removing from IPFS:', error);
+    throw new Error('Failed to remove file from IPFS');
+  }
+};
+
+module.exports = {
+  uploadToIPFS,
+  pinJSONToIPFS,
+  getFromIPFS,
+  saveFileFromIPFS,
+  removeFromIPFS
 };
