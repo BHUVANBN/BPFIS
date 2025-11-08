@@ -15,11 +15,12 @@ function App() {
 
   const handleLogin = (userData) => {
     setUser(userData)
-    if (userData.type === 'farmer') {
+    const roleOrType = userData.type || userData.role
+    if (roleOrType === 'farmer') {
       setCurrentPage('farmer-dashboard')
-    } else if (userData.type === 'seller') {
+    } else if (roleOrType === 'seller' || roleOrType === 'supplier') {
       setCurrentPage('seller-dashboard')
-    } else if (userData.type === 'admin') {
+    } else if (roleOrType === 'admin') {
       setCurrentPage('admin-dashboard')
     }
   }

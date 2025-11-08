@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidebar from '@/components/common/Sidebar'
 import StatisticCard from '@/components/common/StatisticCard'
 import { FloatingActionButtons } from '@/components/common/FloatingActionButton'
@@ -20,7 +20,7 @@ import {
   Trash2,
   Eye
 } from 'lucide-react'
-import { sellerAnalytics } from '@/data/mockData'
+import { supplierSummary, listMyProducts } from '@/lib/endpoints'
 
 const SellerDashboard = ({ user, onLogout }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -34,18 +34,24 @@ const SellerDashboard = ({ user, onLogout }) => {
     { id: 'analytics', label: 'Analytics', icon: TrendingUp },
   ]
 
-  const mockProducts = [
-    { id: 1, name: 'Organic Seeds - Wheat', price: 450, stock: 120, category: 'Seeds', status: 'Active' },
-    { id: 2, name: 'NPK Fertilizer', price: 850, stock: 45, category: 'Fertilizer', status: 'Active' },
-    { id: 3, name: 'Pesticide Spray', price: 320, stock: 0, category: 'Pesticide', status: 'Out of Stock' },
-    { id: 4, name: 'Drip Irrigation Kit', price: 2500, stock: 8, category: 'Equipment', status: 'Active' }
-  ]
+  const [summary, setSummary] = useState({ revenue: 0, orders: 0, units: 0 })
+  const [products, setProducts] = useState([])
 
-  const mockOrders = [
-    { id: 'ORD001', customer: 'Rajesh Kumar', product: 'Organic Seeds - Wheat', quantity: 5, amount: 2250, status: 'Pending', date: '2024-01-15' },
-    { id: 'ORD002', customer: 'Priya Sharma', product: 'NPK Fertilizer', quantity: 2, amount: 1700, status: 'Completed', date: '2024-01-14' },
-    { id: 'ORD003', customer: 'Amit Patel', product: 'Drip Irrigation Kit', quantity: 1, amount: 2500, status: 'Processing', date: '2024-01-13' }
-  ]
+  useEffect(() => {
+    const run = async () => {
+      try {
+        const [{ data: sum }, { data: prods }] = await Promise.all([
+          supplierSummary(),
+          listMyProducts({ page: 1, limit: 20 })
+        ])
+        setSummary(sum?.data?.summary || { revenue: 0, orders: 0, units: 0 })
+        setProducts(prods?.data || [])
+      } catch {
+        // noop minimal
+      }
+    }
+    run()
+  }, [])
 
   const handleChatClick = () => {
     console.log('AI Assistant clicked')
@@ -70,7 +76,7 @@ const SellerDashboard = ({ user, onLogout }) => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <StatisticCard
                 title="Today's Revenue"
-                value={`₹${sellerAnalytics.todayRevenue.toLocaleString()}`}
+                value={`₹${(summary.revenue || 0).toLocaleString()}`}
                 subtitle="Sales today"
                 trend="up"
                 trendValue="+8%"
@@ -78,7 +84,7 @@ const SellerDashboard = ({ user, onLogout }) => {
               />
               <StatisticCard
                 title="This Week"
-                value={`₹${sellerAnalytics.weekRevenue.toLocaleString()}`}
+                value={`₹${(summary.revenue || 0).toLocaleString()}`}
                 subtitle="Weekly sales"
                 trend="up"
                 trendValue="+15%"
@@ -86,62 +92,19 @@ const SellerDashboard = ({ user, onLogout }) => {
               />
               <StatisticCard
                 title="Total Orders"
-                value={sellerAnalytics.totalOrders}
-                subtitle={`${sellerAnalytics.pendingOrders} pending`}
+                value={summary.orders || 0}
+                subtitle={`orders last 30d`}
                 icon={ShoppingCart}
               />
               <StatisticCard
                 title="Rating"
-                value={sellerAnalytics.averageRating}
+                value={4.6}
                 subtitle="Customer rating"
                 icon={Star}
               />
             </div>
 
-            {/* Recent Orders */}
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold text-gray-900">Recent Orders</h2>
-                <Button onClick={() => setActiveTab('orders')}>View All</Button>
-              </div>
-              
-              <Card>
-                <CardContent className="p-0">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-200">
-                        {mockOrders.slice(0, 3).map((order) => (
-                          <tr key={order.id}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{order.id}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.customer}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.product}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹{order.amount.toLocaleString()}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                order.status === 'Completed' ? 'bg-green-100 text-green-800' :
-                                order.status === 'Processing' ? 'bg-blue-100 text-blue-800' :
-                                'bg-yellow-100 text-yellow-800'
-                              }`}>
-                                {order.status}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            {/* Recent Orders (to be wired later) */}
 
             {/* Quick Actions */}
             <div>
@@ -201,15 +164,15 @@ const SellerDashboard = ({ user, onLogout }) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {mockProducts.map((product) => (
-                        <tr key={product.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.name}</td>
+                      {products.map((product) => (
+                        <tr key={product._id}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{product.title}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.category}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₹{product.price}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.stock}</td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              product.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                              product.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                             }`}>
                               {product.status}
                             </span>
@@ -327,11 +290,11 @@ const SellerDashboard = ({ user, onLogout }) => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {mockProducts.slice(0, 3).map((product, index) => (
-                      <div key={product.id} className="flex items-center justify-between">
+                    {products.slice(0, 3).map((product, index) => (
+                      <div key={product._id} className="flex items-center justify-between">
                         <div>
-                          <p className="font-medium">{product.name}</p>
-                          <p className="text-sm text-gray-600">{product.category}</p>
+                          <p className="font-medium">{product.title}</p>
+                          <p className="text-sm text-gray-600">{product.category || '—'}</p>
                         </div>
                         <div className="text-right">
                           <p className="font-semibold">#{index + 1}</p>

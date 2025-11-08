@@ -4,15 +4,17 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Eye, EyeOff, ArrowLeft, Leaf, User, Building2, Phone, Mail, Lock } from 'lucide-react'
+import { User, Building2, Phone, Mail } from 'lucide-react'
 import { useToast } from '@/hooks/useToast'
-import LoadingSpinner from '@/components/common/LoadingSpinner'
-import { cn } from '@/lib/utils'
+import { sendOTP, verifyUser } from '@/lib/endpoints'
 
 const AuthPage = ({ onLogin }) => {
   const [userType, setUserType] = useState('farmer')
   const [authMode, setAuthMode] = useState('login')
-  const [showPassword, setShowPassword] = useState(false)
+  const [otpMode, setOtpMode] = useState(false)
+  const [otp, setOtp] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const { toast } = useToast()
   const [formData, setFormData] = useState({
     name: '',
     companyName: '',
@@ -29,16 +31,39 @@ const AuthPage = ({ onLogin }) => {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Mock authentication - in real app, this would call an API
-    const userData = {
-      name: formData.name || formData.companyName,
-      type: userType,
-      phone: formData.phone,
-      email: formData.email
+    if (!otpMode) {
+      try {
+        setSubmitting(true)
+        await sendOTP(formData.phone)
+        setOtpMode(true)
+      } catch {
+        toast({ title: 'Failed to send OTP', variant: 'destructive' })
+      } finally {
+        setSubmitting(false)
+      }
+      return
     }
-    onLogin(userData)
+    try {
+      setSubmitting(true)
+      const role = userType === 'seller' ? 'supplier' : 'farmer'
+      const payload = {
+        phone: formData.phone,
+        otp,
+        role,
+        name: role === 'farmer' ? formData.name : formData.companyName,
+        email: formData.email || undefined,
+      }
+      const { data } = await verifyUser(payload)
+      localStorage.setItem('agri3-token', data.token)
+      localStorage.setItem('agri3-user', JSON.stringify(data.user))
+      onLogin(data.user)
+    } catch {
+      toast({ title: 'Authentication failed', description: 'Please check the OTP and try again', variant: 'destructive' })
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const resetForm = () => {
@@ -50,6 +75,8 @@ const AuthPage = ({ onLogin }) => {
       password: '',
       serviceType: ''
     })
+    setOtp('')
+    setOtpMode(false)
   }
 
   return (
@@ -149,6 +176,7 @@ const AuthPage = ({ onLogin }) => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     required
+                    disabled={submitting || otpMode}
                   />
                 </div>
               </div>
@@ -189,40 +217,26 @@ const AuthPage = ({ onLogin }) => {
                 </div>
               )}
 
-              {/* Password */}
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              {/* OTP (shown after sending) */}
+              {otpMode && (
+                <div className="space-y-2">
+                  <Label htmlFor="otp">Enter OTP</Label>
                   <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter your password"
-                    className="pl-10 pr-10"
-                    value={formData.password}
-                    onChange={handleInputChange}
+                    id="otp"
+                    name="otp"
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="4-6 digit code"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
                     required
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-gray-400" />
-                    )}
-                  </Button>
                 </div>
-              </div>
+              )}
 
               {/* Submit Button */}
-              <Button type="submit" className="w-full" size="lg">
-                {authMode === 'login' ? 'Sign In' : `Register as ${userType === 'farmer' ? 'Farmer' : 'Seller'}`}
+              <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+                {otpMode ? 'Verify OTP' : 'Send OTP'}
               </Button>
             </form>
 

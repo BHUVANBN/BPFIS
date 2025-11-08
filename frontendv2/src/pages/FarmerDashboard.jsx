@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidebar from '@/components/common/Sidebar'
 import FeatureCard from '@/components/common/FeatureCard'
 import StatisticCard from '@/components/common/StatisticCard'
@@ -18,11 +18,30 @@ import {
   Clock,
   AlertTriangle
 } from 'lucide-react'
-import { features, farmerProfile, cropPredictions, weatherData } from '@/data/mockData'
+import { features } from '@/data/mockData'
+import { farmerSummary, farmerWeather } from '@/lib/endpoints'
 
 const FarmerDashboard = ({ user, onLogout }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [summary, setSummary] = useState({ landCount: 0, verifiedLands: 0 })
+  const [weather, setWeather] = useState({ forecast: [], current: { temperature: '-', condition: '-', humidity: '-', windSpeed: '-', rainfall: '-' } })
+
+  useEffect(() => {
+    const run = async () => {
+      try {
+        const [{ data: sum }, { data: wx }] = await Promise.all([
+          farmerSummary(),
+          farmerWeather({})
+        ])
+        setSummary(sum?.data || { landCount: 0, verifiedLands: 0 })
+        setWeather((w) => wx?.data || w)
+      } catch {
+        // keep defaults
+      }
+    }
+    run()
+  }, [])
 
   const iconMap = {
     MapPin,
@@ -77,29 +96,27 @@ const FarmerDashboard = ({ user, onLogout }) => {
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <StatisticCard
-                title="Total Land"
-                value="5.2"
-                subtitle="Acres registered"
+                title="My Lands"
+                value={summary.landCount}
+                subtitle="Active parcels"
                 icon={MapPin}
               />
               <StatisticCard
-                title="Active Crops"
-                value="3"
-                subtitle="Currently growing"
-                icon={Wheat}
+                title="Verified Lands"
+                value={summary.verifiedLands}
+                subtitle="Verification complete"
+                icon={CheckCircle}
               />
               <StatisticCard
-                title="This Month"
-                value="₹45,000"
-                subtitle="Expected income"
-                trend="up"
-                trendValue="+12%"
+                title="Income"
+                value="-"
+                subtitle="Coming soon"
                 icon={IndianRupee}
               />
               <StatisticCard
-                title="Weather Alert"
-                value="Sunny"
-                subtitle="Next 3 days"
+                title="Weather"
+                value={weather?.current?.condition || '—'}
+                subtitle="Now"
                 icon={Cloud}
               />
             </div>
@@ -123,43 +140,7 @@ const FarmerDashboard = ({ user, onLogout }) => {
               </div>
             </div>
 
-            {/* Recent Activity */}
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Recent Activity</h2>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-600" />
-                      Land Verification
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600 mb-4">Your land documents have been verified successfully.</p>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Clock className="h-4 w-4 mr-1" />
-                      2 hours ago
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <AlertTriangle className="h-5 w-5 text-yellow-600" />
-                      Weather Alert
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600 mb-4">Light rain expected tomorrow. Consider covering sensitive crops.</p>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Clock className="h-4 w-4 mr-1" />
-                      1 day ago
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
+            {/* Recent Activity (to be implemented) */}
           </div>
         )
 
@@ -173,38 +154,9 @@ const FarmerDashboard = ({ user, onLogout }) => {
                 Add New Land
               </Button>
             </div>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Plot #1 - Main Field</CardTitle>
-                  <CardDescription>2.5 acres • Verified</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <p><strong>Survey No:</strong> 123/4A</p>
-                    <p><strong>Location:</strong> Village Rampur, Punjab</p>
-                    <p><strong>Current Crop:</strong> Rice</p>
-                    <p><strong>Status:</strong> <span className="text-green-600">Active</span></p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Plot #2 - North Field</CardTitle>
-                  <CardDescription>2.7 acres • Pending Verification</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <p><strong>Survey No:</strong> 123/5B</p>
-                    <p><strong>Location:</strong> Village Rampur, Punjab</p>
-                    <p><strong>Current Crop:</strong> Wheat</p>
-                    <p><strong>Status:</strong> <span className="text-yellow-600">Pending</span></p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <Card>
+              <CardContent className="p-6 text-gray-600">Your registered lands will appear here.</CardContent>
+            </Card>
           </div>
         )
 
@@ -216,24 +168,7 @@ const FarmerDashboard = ({ user, onLogout }) => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div>
                 <h2 className="text-xl font-semibold mb-4">Recommended Crops</h2>
-                <div className="space-y-4">
-                  {cropPredictions.map((crop) => (
-                    <Card key={crop.id}>
-                      <CardContent className="p-4">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <h3 className="font-semibold">{crop.crop}</h3>
-                            <p className="text-sm text-gray-600">{crop.season} Season</p>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-lg font-bold text-green-600">{crop.suitability}%</div>
-                            <div className="text-sm text-gray-600">{crop.expectedYield}</div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                <Card><CardContent className="p-6 text-gray-600">Predictions will appear here.</CardContent></Card>
               </div>
 
               <div>
@@ -264,7 +199,7 @@ const FarmerDashboard = ({ user, onLogout }) => {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-7 gap-2">
-                    {weatherData.forecast.map((day, index) => (
+                    {weather.forecast.map((day, index) => (
                       <div key={index} className="text-center p-2 rounded-lg bg-gray-50">
                         <div className="font-medium text-sm">{day.day}</div>
                         <div className="text-xs text-gray-600 mt-1">{day.condition}</div>
@@ -283,21 +218,21 @@ const FarmerDashboard = ({ user, onLogout }) => {
                 <CardContent>
                   <div className="space-y-4">
                     <div className="text-center">
-                      <div className="text-3xl font-bold">{weatherData.current.temperature}°C</div>
-                      <div className="text-gray-600">{weatherData.current.condition}</div>
+                      <div className="text-3xl font-bold">{weather.current.temperature}°C</div>
+                      <div className="text-gray-600">{weather.current.condition}</div>
                     </div>
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span>Humidity</span>
-                        <span>{weatherData.current.humidity}%</span>
+                        <span>{weather.current.humidity}%</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Wind Speed</span>
-                        <span>{weatherData.current.windSpeed} km/h</span>
+                        <span>{weather.current.windSpeed} km/h</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Rainfall</span>
-                        <span>{weatherData.current.rainfall} mm</span>
+                        <span>{weather.current.rainfall} mm</span>
                       </div>
                     </div>
                   </div>
